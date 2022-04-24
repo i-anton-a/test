@@ -3,4 +3,5 @@ def privet():
 
 privet(12)
 privet()
-privet(11)
+privet()
+print("что-то добавим")
