@@ -1,4 +1,19 @@
-from random import randint
+from random import randint #нужен для генерации точек в AI
+
+#класс иключений
+class BoardException(Exception):
+    pass
+
+class BoardOutException(BoardException):
+    def __str__(self):
+        return "Вы пытаетесь выстрелить за доску!"
+
+class BoardUsedException(BoardException):
+    def __str__(self):
+        return "Вы уже стреляли в эту клетку"
+
+class BoardWrongShipException(BoardException):
+    pass
 
 class Dot:
     '''класс точка
@@ -27,21 +42,6 @@ class Dot:
            есть ли данная точка выстрела в списке точек корабля
         '''
         return f"({self.x}, {self.y})"
-
-
-class BoardException(Exception):
-    pass
-
-class BoardOutException(BoardException):
-    def __str__(self):
-        return "Вы пытаетесь выстрелить за доску!"
-
-class BoardUsedException(BoardException):
-    def __str__(self):
-        return "Вы уже стреляли в эту клетку"
-
-class BoardWrongShipException(BoardException):
-    pass
 
 class Ship:
     '''класс корабля
