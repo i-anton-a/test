@@ -1,110 +1,90 @@
-from random import randint # для генерации случайных точек в классе AI
+from random import randint
 
-#класс исключений
-    
-class BoardException(Exception):
-    '''
-        общий класс исключения
-        если хотим отлавливать несколько исключений
-        вместо того чтобы описывать exception 
-    '''
-    pass
-
-class BoardOutException(BoardExeption):
-    '''
-         пользователский класс
-    '''
-    def __str__(self):
-        return "Вы пытаетесь выстрелить за пределы поля"
-
-class BoardUsedException(BoardExeption):
-    '''
-        пользовательский класс
-    '''
-    def __str__(self):
-        return "Вы уже стреляли в эту клетку"
-
-class BoardWrongShipException(BoardExeption):
-    '''
-        данное исключение мы не показываем пользователю
-        используется для нормально размещения кораблей
-    '''
-    pass
-
-#класс точки
 class Dot:
+    '''класс точка
     '''
-        класс точка
-    '''
-    def __int__(self, x, y):
-        '''
-            метод определения точек
-            тут мы посто определяем координаты точки
-            в сетке x y
+    def __init__(self, x, y):
+        '''метод определения точек
+           тут мы посто определяем координаты точки
+           в сетке x y
         '''
         self.x = x
         self.y = y
-
+    
     def __eq__(self, other):
-        '''
-           метод сравнения двух объектов
+        '''метод сравнения двух объектов
            чтобы не писать каждый раз
            даный метод используется для сравнения
            возвращяет значение True или False
            стреляли мы по этим координатам или нет
         '''
         return self.x == other.x and self.y == other.y
+    
     def __repr__(self):
+        '''метод служит для вывода
+           точек в консоль
+           например мы выстрелили и хотим проверить
+           есть ли данная точка выстрела в списке точек корабля
         '''
-            метод служит для вывода
-            точек в консоль
-            например мы выстрелили и хотим проверить
-            есть ли данная точка выстрела в списке точек корабля
-        '''
-        return f"Dot({self.x},{self.y})"
+        return f"({self.x}, {self.y})"
 
-#класс коробля
+
+class BoardException(Exception):
+    pass
+
+class BoardOutException(BoardException):
+    def __str__(self):
+        return "Вы пытаетесь выстрелить за доску!"
+
+class BoardUsedException(BoardException):
+    def __str__(self):
+        return "Вы уже стреляли в эту клетку"
+
+class BoardWrongShipException(BoardException):
+    pass
+
 class Ship:
-    '''
-        класс корабля
+    '''класс корабля
     '''
     def __init__(self, bow, l, o):
-    '''
-        конструктор описывающий поля
-    '''
+        '''конструктор описывающий поля
+        '''
         self.bow = bow
-        self.1 = l
+        self.l = l
         self.o = o
         self.lives = l
-
+    
     @property
     def dots(self):
         ship_dots = [] # список точек корабля
         for i in range(self.l):
-            cur_x = self.bow.x
+            cur_x = self.bow.x 
             cur_y = self.bow.y
-
+            
             if self.o == 0:
                 cur_x += i
-
+            
             elif self.o == 1:
                 cur_y += i
-
+            
             ship_dots.append(Dot(cur_x, cur_y))
-
+        
         return ship_dots
-
+    
     def shooten(self, shot):
         return shot in self.dots
-                 
+
 class Board:
     '''класс игровое поле
     '''
     def __init__(self, hid = False, size = 6):
         self.size = size #размер
         self.hid = hid # нужно поле скрывать или нет
+        
         self.count = 0 #количество пораженных кораблей
+        
         self.field = [ ["O"]*size for _ in range(size) ] # размеры клеток где храним состояние
+        
         self.busy = [] # либо точки занятые короблем либо куда стреляли
         self.ships = [] # список короблей доски
     
@@ -115,6 +95,7 @@ class Board:
             походим точки и ставив квадратик а также запомин
             точки в которых есть корабль и которые с ним соседствует 
         '''
+        
         for d in ship.dots:
             if self.out(d) or d in self.busy:
                 raise BoardWrongShipException()
@@ -142,7 +123,7 @@ class Board:
                         self.field[cur.x][cur.y] = "."
                     self.busy.append(cur)
     
-    def __str__(self): 
+    def __str__(self):
         res = ""
         res += "  | 1 | 2 | 3 | 4 | 5 | 6 |"
         for i, row in enumerate(self.field):
@@ -150,7 +131,7 @@ class Board:
         
         if self.hid:
             res = res.replace("■", "O") # заменяем символы коробля на пустые символы
-        return res 
+        return res
     
     def out(self, d):
         '''находится за пределами доски
@@ -183,7 +164,7 @@ class Board:
         
         self.field[d.x][d.y] = "."
         print("Мимо!")
-        return False 
+        return False
     
     def begin(self):
         ''' обнуляем. до игры храним точки куда ставим корабль
@@ -202,7 +183,8 @@ class Player:
         raise NotImplementedError()
     
     def move(self):
-        '''просим указать куда стрелять'''
+        '''просим указать куда стрелять
+        '''
         while True:
             try:
                 target = self.ask()
